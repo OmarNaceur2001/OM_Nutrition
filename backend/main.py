@@ -3,6 +3,11 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List, Dict, Optional
 from fastapi.middleware.cors import CORSMiddleware
+import sys
+from pathlib import Path
+
+# Add models directory to path
+sys.path.insert(0, str(Path(__file__).parent / 'models'))
 
 from ingredient_manager import Ingredient, IngredientManager
 from smart_recommender import SmartMealRecommender, MealRecommendation
