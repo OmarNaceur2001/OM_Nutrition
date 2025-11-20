@@ -1,20 +1,13 @@
-# -*- coding: utf-8 -*-
 from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List, Dict, Optional
 from fastapi.middleware.cors import CORSMiddleware
-import sys
-from pathlib import Path
-
-# Add models directory to path
-sys.path.insert(0, str(Path(__file__).parent / 'models'))
-
-from ingredient_manager import Ingredient, IngredientManager
-from smart_recommender import SmartMealRecommender, MealRecommendation
+import json
+import os
 
 app = FastAPI(title="Nutrition AI Assistant")
 
-# إضافة CORS للسماح بالاتصال من Streamlit
+# Add CORS to allow connection from Streamlit
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -23,9 +16,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# تهيئة المديرين
-ingredient_manager = IngredientManager()
-meal_recommender = SmartMealRecommender()
+# Simple data storage
+ingredients_data = []
+user_feedback = []
 
 class UserInfo(BaseModel):
     weight: float
@@ -39,7 +32,12 @@ class IngredientRequest(BaseModel):
     category: str
     quantity: float
     unit: str
-    expiration_date: Optional[str] = None
+
+class FeedbackRequest(BaseModel):
+    user_id: str
+    recipe_name: str
+    rating: int
+    feedback: str = ""
 
 @app.get("/")
 def home():
@@ -47,7 +45,7 @@ def home():
 
 @app.post("/calculate")
 def calculate_calories(user: UserInfo):
-    """حاسبة السعرات الحرارية"""
+    """Calorie Calculator"""
     try:
         if user.gender.lower() == "male":
             calories = 10 * user.weight + 6.25 * user.height - 5 * user.age + 5
@@ -70,48 +68,118 @@ def calculate_calories(user: UserInfo):
     except Exception as e:
         return {"status": "error", "message": str(e)}
 
-# ⭐ ⭐ ⭐ المسارات الجديدة ⭐ ⭐ ⭐
-
+# Ingredients routes
 @app.get("/ingredients")
 def get_ingredients():
-    """الحصول على جميع المكونات"""
-    return ingredient_manager.get_ingredients()
+    """Get all ingredients"""
+    return ingredients_data
 
 @app.post("/ingredients")
 def add_ingredient(ingredient: IngredientRequest):
-    """إضافة مكون جديد"""
-    ingredient_obj = Ingredient(**ingredient.dict())
-    success = ingredient_manager.add_ingredient(ingredient_obj)
-    return {"status": "success" if success else "error"}
+    """Add new ingredient"""
+    ingredients_data.append(ingredient.dict())
+    return {"status": "success", "message": "Ingredient added successfully"}
 
 @app.get("/recommend-meals")
 def recommend_meals(target_calories: int, preference: str = "balanced"):
-    """توصية بوجبات يومية"""
-    recommendations = meal_recommender.recommend_meals(target_calories, preference)
-    
-    # تحويل إلى JSON قابل للتserialization
-    meals_data = []
-    for meal in recommendations:
-        meals_data.append({
-            "name": meal.name,
-            "ingredients": [ing.dict() for ing in meal.ingredients],
-            "total_calories": meal.total_calories,
-            "total_protein": meal.total_protein,
-            "total_carbs": meal.total_carbs,
-            "total_fats": meal.total_fats
-        })
-    
-    return {"meals": meals_data}
+    """Recommend daily meals"""
+    sample_meals = [
+        {
+            "name": "Balanced Breakfast",
+            "ingredients": [
+                {"name": "Oats", "quantity": 50, "unit": "grams"},
+                {"name": "Milk", "quantity": 200, "unit": "ml"},
+                {"name": "Banana", "quantity": 1, "unit": "piece"}
+            ],
+            "total_calories": 350,
+            "total_protein": 15,
+            "total_carbs": 60,
+            "total_fats": 6
+        },
+        {
+            "name": "Healthy Lunch", 
+            "ingredients": [
+                {"name": "Chicken", "quantity": 150, "unit": "grams"},
+                {"name": "Rice", "quantity": 100, "unit": "grams"},
+                {"name": "Vegetables", "quantity": 200, "unit": "grams"}
+            ],
+            "total_calories": 450,
+            "total_protein": 35,
+            "total_carbs": 50,
+            "total_fats": 10
+        }
+    ]
+    return {"meals": sample_meals}
 
 @app.get("/find-recipes")
 def find_recipes(ingredients: str = ""):
-    """إيجاد وصفات بناءً على المكونات"""
-    ingredient_list = [ing.strip() for ing in ingredients.split(",")] if ingredients else []
-    recipes = meal_recommender.find_recipes_by_ingredients(ingredient_list)
-    return {"recipes": recipes}
+    """Find recipes based on ingredients"""
+    sample_recipes = [
+        {
+            "name": "Chicken Salad",
+            "ingredients": ["Chicken", "Tomato", "Lettuce", "Olive Oil"],
+            "calories": 320,
+            "protein": 25,
+            "carbs": 12,
+            "fats": 18,
+            "match_percentage": 80
+        },
+        {
+            "name": "Chicken Rice",
+            "ingredients": ["Rice", "Chicken", "Olive Oil"],
+            "calories": 450,
+            "protein": 30,
+            "carbs": 45,
+            "fats": 12,
+            "match_percentage": 75
+        }
+    ]
+    return {"recipes": sample_recipes}
 
-@app.get("/low-quantity")
-def get_low_quantity_ingredients():
-    """الحصول على المكونات المنخفضة الكمية"""
-    low_quantity = ingredient_manager.get_low_quantity_ingredients()
-    return {"ingredients": [ing.dict() for ing in low_quantity]}
+@app.get("/nutrition-tips")
+def get_nutrition_tips(goal: str = "general"):
+    """Customized nutrition tips"""
+    tips = {
+        "weight_loss": [
+            "Drink water before meals to reduce appetite",
+            "Focus on protein and vegetables",
+            "Avoid sugary drinks",
+            "Walk 30 minutes daily"
+        ],
+        "muscle_gain": [
+            "Eat protein after workout",
+            "Increase complex carbs for energy",
+            "Don't neglect healthy fats",
+            "Sleep 7-8 hours for recovery"
+        ],
+        "maintenance": [
+            "Maintain meal variety",
+            "Exercise 3-4 times weekly",
+            "Eat vegetables and fruits daily",
+            "Drink 2 liters of water"
+        ],
+        "general": [
+            "Eat breakfast daily",
+            "Use olive oil not processed oils",
+            "Choose whole grains",
+            "Reduce salt and sugar"
+        ]
+    }
+    return {"tips": tips.get(goal, tips["general"])}
+
+# Feedback system
+@app.post("/feedback")
+def add_user_feedback(feedback: FeedbackRequest):
+    """Add user rating"""
+    user_feedback.append(feedback.dict())
+    return {"status": "success", "message": "Rating saved successfully"}
+
+@app.get("/personalized-recipes/{user_id}")
+def get_personalized_recipes(user_id: str):
+    """Get personalized recommendations"""
+    user_recipes = [fb for fb in user_feedback if fb["user_id"] == user_id and fb["rating"] >= 4]
+    return {"recommendations": [fb["recipe_name"] for fb in user_recipes[:3]]}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
