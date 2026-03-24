@@ -1,23 +1,18 @@
-# 🏋️ Fitness AI Trainer — Real-Time Exercise Recognition & Counting
+# 🥗 OM_Nutrition — AI-Powered Nutrition Tracker
 
-> An AI-powered fitness coach that uses Computer Vision and Deep Learning to track your workouts in real time.
+> A full-stack nutrition tracking app with AI recommendations — because good performance starts with good fuel.
 
 ---
 
 ## 🎯 What is this project?
 
-This application uses your **webcam or uploaded videos** to automatically:
-- **Detect which exercise you're doing** (squat, push-up, shoulder press, etc.)
-- **Count your repetitions** accurately using pose estimation
-- **Give you fitness advice** via an AI chatbot
+**OM_Nutrition** is a smart nutrition tracking application with a complete backend and frontend, that helps users:
+- **Calculate calories** for any meal or food item
+- **Track macronutrients** (proteins, carbs, fats) in real time
+- **Monitor daily intake** against personal health goals
+- **Receive AI-powered nutrition insights** and recommendations
 
-Built as part of my engineering studies at **ESPRIT Tunisia**, applying state-of-the-art ML research to a real-world fitness problem.
-
----
-
-## 🚀 Demo
-
-[![Watch the demo](https://img.youtube.com/vi/GPmDPB1bSmc/hqdefault.jpg)](https://www.youtube.com/watch?v=GPmDPB1bSmc)
+Built as part of my AI & Data Science engineering journey at **ESPRIT Tunisia**.
 
 ---
 
@@ -25,115 +20,70 @@ Built as part of my engineering studies at **ESPRIT Tunisia**, applying state-of
 
 | Feature | Description |
 |---|---|
-| 📹 Video Analysis | Upload a workout video → get rep counts |
-| 🎥 Webcam Mode | Real-time rep counting via webcam |
-| 🤖 Auto Classify | AI detects your exercise automatically |
-| 💬 AI Chatbot | GPT-powered fitness coach for guidance |
+| 🔢 Calorie Calculator | Instantly calculate calories for any food |
+| 📊 Nutrient Breakdown | Proteins, carbs, fats — fully tracked |
+| 🤖 AI Nutrition Module | Smart recommendations based on your goals |
+| 🔔 Notification System | Reminders to log meals and hit daily targets |
+| 📅 Daily Log | Full history of your nutrition intake |
 
 ---
 
-## 🧠 How It Works
+## 🗂️ Project Structure
 
-### Pose Estimation
-Uses **MediaPipe** to extract 33 body landmarks (joints) from each video frame.
-
-### Exercise Classification
-A **BiLSTM (Bidirectional LSTM)** neural network analyzes sequences of 30 frames and classifies the exercise based on joint angles and movement patterns.
-
-### Rep Counting
-Tracks "up" and "down" movement phases using angle thresholds — counts a rep only when a full movement cycle is completed.
+```
+OM_Nutrition/
+│
+├── backend/               # Server-side logic & AI modules
+│   ├── ai/                # AI-powered nutrition recommendations
+│   ├── notifications/     # Smart notification system
+│   └── ...
+│
+├── frontend/              # User interface
+│   └── ...
+│
+├── data/                  # Food database & nutrition datasets
+│   └── ...
+│
+└── README.md
+```
 
 ---
 
 ## 🛠️ Tech Stack
 
-![Python](https://img.shields.io/badge/Python-3.7+-blue)
-![TensorFlow](https://img.shields.io/badge/TensorFlow-ML-orange)
-![MediaPipe](https://img.shields.io/badge/MediaPipe-Pose-green)
-![Streamlit](https://img.shields.io/badge/Streamlit-WebApp-red)
-![OpenAI](https://img.shields.io/badge/OpenAI-Chatbot-purple)
+![Python](https://img.shields.io/badge/Python-3.x-blue)
+![AI](https://img.shields.io/badge/AI-Nutrition_Module-green)
+![Full Stack](https://img.shields.io/badge/Architecture-Full_Stack-orange)
 
-- **Pose Estimation**: MediaPipe
-- **Deep Learning**: LSTM / BiLSTM (TensorFlow/Keras)
-- **Web Interface**: Streamlit
-- **Chatbot**: OpenAI GPT-3.5-turbo + LangChain
-- **Computer Vision**: OpenCV
+- **Language**: Python
+- **Architecture**: Full-stack (Backend + Frontend)
+- **AI Module**: Smart nutrition analysis and personalized recommendations
+- **Data**: Nutritional food database
 
 ---
 
 ## ⚙️ Installation & Setup
 
-### Prerequisites
-- Python 3.7+
-- Webcam (for live mode)
-- OpenAI API Key (for chatbot)
-
-### Steps
-
 ```bash
 # 1. Clone the repository
-git clone https://github.com/YOUR_USERNAME/fitness-ai-trainer.git
-cd fitness-ai-trainer
+git clone https://github.com/OmarNaceur2001/OM_Nutrition.git
+cd OM_Nutrition
 
-# 2. Create a virtual environment
-python -m venv venv
-source venv/bin/activate       # Mac/Linux
-# venv\Scripts\activate        # Windows
-
-# 3. Install dependencies
+# 2. Install dependencies
 pip install -r requirements.txt
 
-# 4. Run the app
-streamlit run main.py
+# 3. Run the app
+python backend/main.py
 ```
-
----
-
-## 📁 Project Structure
-
-```
-fitness-ai-trainer/
-│
-├── main.py                          # Streamlit app entry point
-├── ExerciseAiTrainer.py             # Exercise-specific pose logic
-├── AiTrainer_utils.py               # Image processing utilities
-├── PoseModule2.py                   # MediaPipe pose estimation
-├── chatbot.py                       # OpenAI chatbot integration
-├── extract_features.py              # Feature extraction from videos
-├── create_sequence_of_features.py   # Dataset sequence generation
-├── train_bidirectionallstm.py       # BiLSTM model training script
-├── requirements.txt
-└── shoulder_press_form.mp4          # Sample exercise video
-```
-
----
-
-## 📊 Model Performance
-
-The BiLSTM model was trained on a combined dataset:
-- **Kaggle Real Workout Videos** — real-world exercise data
-- **InfiniteRep Dataset** — synthetic avatar videos
-- **Custom collected data** — diverse exercise variations
-
-Evaluated using: Accuracy, Precision, Recall, F1-Score
-
----
-
-## 🔬 Research Base
-
-This project implements concepts from:
-
-> *"Real-Time Fitness Exercise Classification and Counting from Video Frames"*  
-> [arxiv.org/abs/2411.11548](https://arxiv.org/abs/2411.11548)
 
 ---
 
 ## 👨‍💻 Author
 
-**Omar** — AI & Data Science Engineering Student @ ESPRIT Tunisia 🇹🇳  
+**Omar Naceur** — AI & Data Science Engineering Student @ ESPRIT Tunisia 🇹🇳  
 🌍 Open to opportunities abroad  
-📧 Connect with me on [LinkedIn](https://www.linkedin.com/in/omar-naceur-b152612a9/)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://www.linkedin.com/in/YOUR_LINKEDIN)
 
 ---
 
-⭐ **If this project helped you, give it a star!** It motivates me to keep building.
+⭐ **Found this useful? Drop a star!**
